@@ -8,7 +8,7 @@ export async function POST(req: Request & { body: WebhookRequestBody }) {
     channelAccessToken: process.env.LINE_ACCESS_TOKEN || "",
   });
 
-  console.log(req);
+  console.log(req.body);
 
   try {
   //   for (const event of events) {
