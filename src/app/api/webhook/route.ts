@@ -9,7 +9,10 @@ export async function POST(req: Request & { body: WebhookRequestBody }) {
   });
 
   console.log("req : ", req);
-  console.log("req.body : ", req.text());
+
+  req.json().then((data) => {
+    console.log("data : ", data);
+  });
 
   try {
   //   for (const event of events) {
