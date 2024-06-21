@@ -8,38 +8,36 @@ export async function POST(req: Request & { body: WebhookRequestBody }) {
     channelAccessToken: process.env.LINE_ACCESS_TOKEN || "",
   });
 
-  console.log("req : ", req);
+  const res = await req.json();
 
-  req.json().then((data) => {
-    console.log("data : ", data);
-  });
+  if (!res.events) return Response.json({ status: 400, message: "Bad Request" });
 
   try {
-  //   for (const event of events) {
-  //     if (event.type === "message" && event.message.type === "text") {
-  //       const message = event.message.text.toLowerCase();
+    for (const event of res.events) {
+      if (event.type === "message" && event.message.type === "text") {
+        const message = event.message.text.toLowerCase();
 
-  //       let replyMessage = "";
+        let replyMessage = "";
 
-  //       switch (message) {
-  //         case "/ตารางเรียน":
-  //           replyMessage = "ส่งตารางเรียน";
-  //           break;
-  //         default:
-  //           break;
-  //       }
+        switch (message) {
+          case "/ตารางเรียน":
+            replyMessage = "ส่งตารางเรียน";
+            break;
+          default:
+            break;
+        }
 
-  //       return client.replyMessage({
-  //         replyToken: event.replyToken,
-  //         messages: [
-  //           {
-  //             type: "text",
-  //             text: replyMessage,
-  //           },
-  //         ],
-  //       });
-  //     }
-  //   }
+        return client.replyMessage({
+          replyToken: event.replyToken,
+          messages: [
+            {
+              type: "text",
+              text: replyMessage,
+            },
+          ],
+        });
+      }
+    }
 
     return Response.json({ status: 200, message: "Success" });
   } catch (error) {
