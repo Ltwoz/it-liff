@@ -12,7 +12,6 @@ export async function POST(req: Request) {
   if (!res.events) return Response.json({ status: 400, message: "Bad Request" });
 
   try {
-    console.log(res.events);
     for (const event of res.events) {
       if (event.type === "message" && event.message.type === "text") {
         const message = event.message.text.toLowerCase();
@@ -27,7 +26,7 @@ export async function POST(req: Request) {
             break;
         }
 
-        client.replyMessage({
+        await client.replyMessage({
           replyToken: event.replyToken,
           messages: [
             {
@@ -39,7 +38,7 @@ export async function POST(req: Request) {
       }
     }
 
-    return Response.json({ status: 200, message: "Success" });
+    return Response.json({ status: 200, message: "success" });
   } catch (error) {
     throw new Error(`Caught error at webhook with these error : ${error}`);
   }
