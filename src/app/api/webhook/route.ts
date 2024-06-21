@@ -1,21 +1,20 @@
 import { WebhookRequestBody, messagingApi } from "@line/bot-sdk";
 
-export async function POST(req: Request & { body: WebhookRequestBody }) {
-  const { events } = req.body;
+export async function POST(req: Request) {
   const { MessagingApiClient } = messagingApi;
 
   const client = new MessagingApiClient({
     channelAccessToken: process.env.LINE_ACCESS_TOKEN || "",
   });
 
-  const res = await req.json();
+  const res: WebhookRequestBody = await req.json();
 
   if (!res.events) return Response.json({ status: 400, message: "Bad Request" });
 
   try {
+    console.log(res.events);
     for (const event of res.events) {
       if (event.type === "message" && event.message.type === "text") {
-        console.log("event : ", event)
         const message = event.message.text.toLowerCase();
 
         let replyMessage = "";
