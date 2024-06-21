@@ -1,6 +1,6 @@
 import { WebhookRequestBody, messagingApi } from "@line/bot-sdk";
 
-export async function POST(req: any) {
+export async function POST(req: Request & { body: WebhookRequestBody }) {
   const { events } = req.body;
   const { MessagingApiClient } = messagingApi;
 
@@ -9,7 +9,7 @@ export async function POST(req: any) {
   });
 
   console.log("req : ", req);
-  console.log("req.body : ", req.body);
+  console.log("req.body : ", req.text());
 
   try {
   //   for (const event of events) {
