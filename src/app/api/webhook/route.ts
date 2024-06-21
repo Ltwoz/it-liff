@@ -27,7 +27,7 @@ export async function POST(req: Request & { body: WebhookRequestBody }) {
             break;
         }
 
-        return client.replyMessage({
+        client.replyMessage({
           replyToken: event.replyToken,
           messages: [
             {
@@ -36,6 +36,8 @@ export async function POST(req: Request & { body: WebhookRequestBody }) {
             },
           ],
         });
+
+        return;
       }
     }
 
