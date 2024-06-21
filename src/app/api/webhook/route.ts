@@ -15,13 +15,14 @@ export async function POST(req: Request & { body: WebhookRequestBody }) {
   try {
     for (const event of res.events) {
       if (event.type === "message" && event.message.type === "text") {
+        console.log("event : ", event)
         const message = event.message.text.toLowerCase();
 
         let replyMessage = "";
 
         switch (message) {
           case "/ตารางเรียน":
-            replyMessage = "ส่งตารางเรียน";
+            replyMessage = "ส่งตารางเรียนจาก Webhook";
             break;
           default:
             break;
@@ -36,8 +37,6 @@ export async function POST(req: Request & { body: WebhookRequestBody }) {
             },
           ],
         });
-
-        return;
       }
     }
 
