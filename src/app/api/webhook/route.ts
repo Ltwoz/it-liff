@@ -1,17 +1,15 @@
-import { WebhookRequestBody, messagingApi } from "@line/bot-sdk";
+import { WebhookRequestBody } from "@line/bot-sdk";
+import { Reply } from "./_service/reply";
 
 export async function POST(req: Request) {
-  const { MessagingApiClient } = messagingApi;
-
-  const client = new MessagingApiClient({
-    channelAccessToken: process.env.LINE_ACCESS_TOKEN || "",
-  });
-
   const res: WebhookRequestBody = await req.json();
 
-  if (!res.events) return Response.json({ status: 400, message: "Bad Request" });
+  if (!res.events)
+    return Response.json({ status: 400, message: "Bad Request" });
 
   try {
+    const reply = new Reply();
+
     for (const event of res.events) {
       if (event.type === "message" && event.message.type === "text") {
         const message = event.message.text.toLowerCase();
@@ -26,14 +24,10 @@ export async function POST(req: Request) {
             break;
         }
 
-        await client.replyMessage({
+        await reply.sendImage({
           replyToken: event.replyToken,
-          messages: [
-            {
-              type: "text",
-              text: replyMessage,
-            },
-          ],
+          originalContentUrl: "https://i.kym-cdn.com/entries/icons/facebook/000/041/972/kaicenat.jpg",
+          previewImageUrl: "https://i.kym-cdn.com/entries/icons/facebook/000/041/972/kaicenat.jpg",
         });
       }
     }
