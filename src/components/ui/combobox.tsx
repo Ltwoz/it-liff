@@ -23,9 +23,15 @@ interface ComboboxProps {
   options: { label: string; value: string }[];
   value: string;
   onChange: (value: string) => void;
+  searchable?: boolean;
 }
 
-export const Combobox = ({ options, value, onChange }: ComboboxProps) => {
+export const Combobox = ({
+  options,
+  value,
+  onChange,
+  searchable = true,
+}: ComboboxProps) => {
   const [open, setOpen] = React.useState(false);
 
   return (
@@ -45,7 +51,7 @@ export const Combobox = ({ options, value, onChange }: ComboboxProps) => {
       </PopoverTrigger>
       <PopoverContent className="w-full p-0">
         <Command>
-          <CommandInput placeholder="Search option..." />
+          {searchable && <CommandInput placeholder="Search option..." />}
           <CommandList>
             <CommandEmpty>No option found.</CommandEmpty>
             <CommandGroup>
