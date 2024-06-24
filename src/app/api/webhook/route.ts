@@ -1,5 +1,5 @@
 import { WebhookRequestBody } from "@line/bot-sdk";
-import { Reply } from "./_service/reply";
+import { classSchedule } from "./_messages/class-schedule";
 
 export async function POST(req: Request) {
   const res: WebhookRequestBody = await req.json();
@@ -8,27 +8,17 @@ export async function POST(req: Request) {
     return Response.json({ status: 400, message: "Bad Request" });
 
   try {
-    const reply = new Reply();
-
     for (const event of res.events) {
       if (event.type === "message" && event.message.type === "text") {
         const message = event.message.text.toLowerCase();
 
-        let replyMessage = "";
-
         switch (message) {
           case "/ตารางเรียน":
-            replyMessage = "ส่งตารางเรียนจาก Webhook";
+            await classSchedule(event);
             break;
           default:
             break;
         }
-
-        await reply.sendImage({
-          replyToken: event.replyToken,
-          originalContentUrl: "https://i.kym-cdn.com/entries/icons/facebook/000/041/972/kaicenat.jpg",
-          previewImageUrl: "https://i.kym-cdn.com/entries/icons/facebook/000/041/972/kaicenat.jpg",
-        });
       }
     }
 
