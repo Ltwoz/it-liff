@@ -9,26 +9,39 @@ export async function classSchedule(event: MessageEvent) {
 
   const userId = event.source.userId;
 
-  const { data }: { data: Students[] | null } = await supabase
+  const { data: students }: { data: Students[] | null } = await supabase
     .from("students")
     .select("*")
     .eq("line_uid", userId);
 
-  if (!data?.length) {
+  if (!students?.length) {
     await reply.sendText({
       replyToken: event.replyToken,
       text: "คุณยังไม่ได้ลงทะเบียน",
     });
+
+    return;
   }
 
-  
+  const { data: schedules } = await supabase
+    .from("class_schedules")
+    .select("public_url")
+    .eq("level", students[0].level);
 
-  // ทำฟังก์ชั่นเช็คว่าเป็นนักศึกษาชั้นไหน
-  // โดยเอา userId ไป query หาใน database
+  if (!schedules?.length) {
+    await reply.sendText({
+      replyToken: event.replyToken,
+      text: "ไม่พบตารางเรียน",
+    });
 
-  // await reply.sendImage({
-  //     replyToken: event.replyToken,
-  //     originalContentUrl: "https://i.kym-cdn.com/entries/icons/facebook/000/041/972/kaicenat.jpg",
-  //     previewImageUrl: "https://i.kym-cdn.com/entries/icons/facebook/000/041/972/kaicenat.jpg",
-  //   });
+    return;
+  }
+
+  await reply.sendImage({
+    replyToken: event.replyToken,
+    originalContentUrl: schedules[0].public_url,
+    previewImageUrl: schedules[0].public_url,
+  });
+
+  return;
 }
