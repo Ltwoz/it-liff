@@ -16,6 +16,8 @@ export async function POST(req: Request) {
           case "/ตารางเรียน":
             await classSchedule(event);
             break;
+          case "/กิจกรรม":
+            break;
           default:
             break;
         }

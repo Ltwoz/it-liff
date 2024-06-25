@@ -3,7 +3,7 @@ const { MessagingApiClient } = messagingApi;
 
 export type TextParam = {
   replyToken: string;
-  message: string;
+  text: string;
 };
 
 export type ImageParam = {
@@ -26,13 +26,13 @@ export class Reply {
    * @param TextParam
    *
    */
-  public async sendText({ replyToken, message }: TextParam) {
+  public async sendText({ replyToken, text }: TextParam) {
     await this.client.replyMessage({
       replyToken,
       messages: [
         {
           type: "text",
-          text: message,
+          text,
         },
       ],
     });

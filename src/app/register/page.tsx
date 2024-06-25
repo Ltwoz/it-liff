@@ -48,7 +48,7 @@ const options = [
   },
 ];
 
-export default function Home() {
+export default function Register() {
   const [profile, setProfile] = useState<IProfile>();
 
   const form = useForm<z.infer<typeof formSchema>>({
