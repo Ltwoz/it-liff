@@ -1,7 +1,7 @@
 import { MessageEvent } from "@line/bot-sdk";
 import { Reply } from "../_service/reply";
 import { createClient } from "@/lib/supabase/server";
-import { Students } from "@/types/students";
+import { Student } from "@/types/student";
 
 export async function classSchedule(event: MessageEvent) {
   const reply = new Reply();
@@ -9,12 +9,13 @@ export async function classSchedule(event: MessageEvent) {
 
   const userId = event.source.userId;
 
-  const { data: students }: { data: Students[] | null } = await supabase
+  const { data: student }: { data: Student | null } = await supabase
     .from("students")
     .select("*")
-    .eq("line_uid", userId);
+    .eq("line_uid", userId)
+    .single();
 
-  if (!students?.length) {
+  if (!student) {
     await reply.sendText({
       replyToken: event.replyToken,
       text: "คุณยังไม่ได้ลงทะเบียน",
@@ -23,12 +24,13 @@ export async function classSchedule(event: MessageEvent) {
     return;
   }
 
-  const { data: schedules } = await supabase
+  const { data: schedule } = await supabase
     .from("class_schedules")
     .select("public_url")
-    .eq("level", students[0].level);
+    .eq("level", student.level)
+    .single();
 
-  if (!schedules?.length) {
+  if (!schedule) {
     await reply.sendText({
       replyToken: event.replyToken,
       text: "ไม่พบตารางเรียน",
@@ -39,8 +41,8 @@ export async function classSchedule(event: MessageEvent) {
 
   await reply.sendImage({
     replyToken: event.replyToken,
-    originalContentUrl: schedules[0].public_url,
-    previewImageUrl: schedules[0].public_url,
+    originalContentUrl: schedule.public_url,
+    previewImageUrl: schedule.public_url,
   });
 
   return;
