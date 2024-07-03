@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { LiffProvider } from "@/providers/liff-provider";
+import { AuthProvider } from "@/providers/auth-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,7 +20,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <LiffProvider liffId={process.env.NEXT_PUBLIC_LIFF_ID || ""}>
-          {children}
+          <AuthProvider>{children}</AuthProvider>
         </LiffProvider>
       </body>
     </html>
