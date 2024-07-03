@@ -19,12 +19,17 @@ import { Combobox } from "@/components/ui/combobox";
 import { createClient } from "@/lib/supabase/client";
 import { Level } from "@/types/level";
 import { useLiff } from "@/providers/liff-provider";
+import { register } from "./action";
 
 const formSchema = z.object({
-  studentCode: z.string().min(11),
-  studentName: z.string().min(3),
+  code: z.string().min(11),
+  name: z.string().min(3),
   level: z.string().min(1),
+  email: z.string().email(),
+  phone_no: z.string().min(10),
 });
+
+export type StudentType = z.infer<typeof formSchema>;
 
 type LevelOption = {
   value: string;
@@ -40,12 +45,14 @@ export default function RegisterForm() {
   const [profile, setProfile] = useState<IProfile>();
   const [levels, setLevels] = useState<LevelOption[]>([]);
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<StudentType>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      studentCode: "",
-      studentName: "",
+      code: "",
+      name: "",
       level: "",
+      email: "",
+      phone_no: "",
     },
   });
 
@@ -53,8 +60,6 @@ export default function RegisterForm() {
 
   const getLevel = useCallback(async () => {
     try {
-      setLoading(true);
-
       const { data, error } = await supabase.from("levels").select("*");
 
       if (error) {
@@ -72,9 +77,7 @@ export default function RegisterForm() {
         setLevels(formattedData);
       }
     } catch (error) {
-      alert("Error loading user data!");
-    } finally {
-      setLoading(false);
+      console.log(error);
     }
   }, [supabase]);
 
@@ -89,8 +92,11 @@ export default function RegisterForm() {
     getLevel();
   }, [getLevel]);
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+  const onSubmit = async (values: StudentType) => {
+    await register({
+      ...values,
+      line_uid: profile?.userId,
+    });
   };
 
   return (
@@ -107,7 +113,7 @@ export default function RegisterForm() {
         >
           <FormField
             control={form.control}
-            name="studentCode"
+            name="code"
             render={({ field }) => (
               <FormItem>
                 <FormControl>
@@ -119,7 +125,7 @@ export default function RegisterForm() {
           />
           <FormField
             control={form.control}
-            name="studentName"
+            name="name"
             render={({ field }) => (
               <FormItem>
                 <FormControl>
@@ -136,6 +142,30 @@ export default function RegisterForm() {
               <FormItem>
                 <FormControl>
                   <Combobox options={levels} {...field} searchable={false} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <Input placeholder="อีเมล" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="phone_no"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <Input placeholder="เบอร์โทรศัพท์" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

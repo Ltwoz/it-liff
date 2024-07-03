@@ -15,6 +15,7 @@ import {
 import { useLiff } from "./liff-provider";
 import { IProfile } from "@/types/profile";
 import { profile } from "console";
+import Loading from "@/components/loading";
 
 const AuthContext = createContext<{
   loading: boolean;
@@ -35,9 +36,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<IProfile>();
 
-  const privateRoutes = useMemo(() => [
-    "/register",
-  ], []);
+  const privateRoutes = useMemo(() => ["/register"], []);
 
   const checkAuth = useCallback(async () => {
     if (liff) {
@@ -74,7 +73,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
 
   return (
     <AuthContext.Provider value={{ loading, profile }}>
-      {children}
+      {loading ? <Loading /> : children}
     </AuthContext.Provider>
   );
 };
