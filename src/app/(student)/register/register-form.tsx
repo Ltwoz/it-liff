@@ -171,7 +171,7 @@ export default function RegisterForm() {
               </FormItem>
             )}
           />
-          <Button type="submit" disabled={!isValid}>
+          <Button type="submit" disabled={!isValid || isSubmitting}>
             ลงทะเบียน
           </Button>
         </form>
