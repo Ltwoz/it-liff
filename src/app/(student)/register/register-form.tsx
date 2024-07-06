@@ -19,7 +19,8 @@ import { Combobox } from "@/components/ui/combobox";
 import { createClient } from "@/lib/supabase/client";
 import { Level } from "@/types/level";
 import { useLiff } from "@/providers/liff-provider";
-import { register } from "./action";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   code: z.string().min(11),
@@ -39,6 +40,7 @@ type LevelOption = {
 export default function RegisterForm() {
   const supabase = createClient();
 
+  const router = useRouter();
   const { liff } = useLiff();
 
   const [loading, setLoading] = useState(true);
@@ -93,10 +95,21 @@ export default function RegisterForm() {
   }, [getLevel]);
 
   const onSubmit = async (values: StudentType) => {
-    await register({
-      ...values,
-      line_uid: profile?.userId,
-    });
+    const { data, error } = await supabase
+      .from("students")
+      .insert({
+        ...values,
+        line_uid: profile?.userId,
+      })
+      .select()
+      .single();
+
+    if (data) {
+      toast.success("Register success");
+      router;
+    } else {
+      toast.error("Something went wrong");
+    }
   };
 
   return (
