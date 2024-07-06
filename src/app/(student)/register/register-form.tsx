@@ -105,8 +105,8 @@ export default function RegisterForm() {
       .single();
 
     if (data) {
+      router.replace("/");
       toast.success("Register success");
-      router;
     } else {
       toast.error("Something went wrong");
     }
