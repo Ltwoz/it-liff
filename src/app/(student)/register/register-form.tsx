@@ -21,6 +21,8 @@ import { Level } from "@/types/level";
 import { useLiff } from "@/providers/liff-provider";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import Image from 'next/image'
+import { StudentIcon, NameIcon, EmailIcon, PhoneNumberIcon } from '@/icons/iconsSVG';
 
 const formSchema = z.object({
   code: z.string().min(11),
@@ -113,82 +115,99 @@ export default function RegisterForm() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen items-center justify-center gap-y-6 px-10">
-      <h1>ลงทะเบียน</h1>
-      <Avatar className="w-16 h-16">
-        <AvatarImage src={profile?.pictureUrl} />
-        <AvatarFallback>Profile</AvatarFallback>
-      </Avatar>
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-4 w-full md:w-2/5"
-        >
-          <FormField
-            control={form.control}
-            name="code"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Input placeholder="รหัสนักศึกษา" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+    <div className="flex min-h-screen items-center justify-center bg-gray-100 p-4">
+      <div className="bg-white shadow-md rounded-lg flex flex-col md:flex-row w-full max-w-4xl mx-auto">
+        <div className="flex flex-col justify-center p-8 w-full md:w-1/2">
+          <h1 className="text-2xl font-bold mb-4 text-center">ลงทะเบียน</h1>
+          <div className="flex justify-center mb-4">
+            <Avatar className="w-16 h-16">
+              <AvatarImage src={profile?.pictureUrl} />
+              <AvatarFallback>Profile</AvatarFallback>
+            </Avatar>
+          </div>
+          <Form {...form}>
+            <form 
+            onSubmit={form.handleSubmit(onSubmit)} 
+            className="space-y-4 w-full"
+            >
+              <FormField
+                control={form.control}
+                name="level"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Combobox options={levels} {...field} searchable={false} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="code"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input placeholder="รหัสนักศึกษา" icon={StudentIcon} {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input placeholder="ชื่อ-นามสกุล" icon={NameIcon} {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input placeholder="อีเมล" icon={EmailIcon} {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="phone_no"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input placeholder="เบอร์โทรศัพท์" icon={PhoneNumberIcon} {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="flex justify-end">
+                <Button type="submit" disabled={!isValid || isSubmitting}>
+                  ลงทะเบียน
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </div>
+        <div className="hidden md:block w-full md:w-1/2">
+          <Image
+            src="/BG.png"
+            alt="School"
+            width={500}
+            height={500}
+            className="rounded-b-lg md:rounded-r-lg md:rounded-bl-none h-full w-full object-cover"
           />
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Input placeholder="ชื่อ-นามสกุล" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="level"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Combobox options={levels} {...field} searchable={false} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Input placeholder="อีเมล" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="phone_no"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Input placeholder="เบอร์โทรศัพท์" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <Button type="submit" disabled={!isValid || isSubmitting}>
-            ลงทะเบียน
-          </Button>
-        </form>
-      </Form>
+        </div>
+      </div>
     </div>
   );
 }
