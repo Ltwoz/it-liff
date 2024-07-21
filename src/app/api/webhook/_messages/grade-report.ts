@@ -3,12 +3,13 @@ import { Reply } from "../_service/reply";
 import { createClient } from "@/lib/supabase/server";
 import { Student } from "@/types/student";
 
-export async function classSchedule(event: MessageEvent) {
+export async function gradeReport(event: MessageEvent) {
   const reply = new Reply();
   const supabase = createClient();
 
   const userId = event.source.userId;
 
+  const link = "https://std2018.vec.go.th/web/";
   const notregisterlink = "https://liff.line.me/2005387694-RmynZd5l";
 
   const { data: student }: { data: Student | null } = await supabase
@@ -25,26 +26,10 @@ export async function classSchedule(event: MessageEvent) {
 
     return;
   }
-
-  const { data: schedule } = await supabase
-    .from("class_schedules")
-    .select("public_url")//ยังไม่ได้ upload รูป
-    .eq("level", student.level)
-    .single();
-
-  if (!schedule) {
-    await reply.sendText({
-      replyToken: event.replyToken,
-      text: "ไม่พบตารางเรียน",
-    });
-
-    return;
-  }
-
-  await reply.sendImage({
+  
+  await reply.sendText({
     replyToken: event.replyToken,
-    originalContentUrl: schedule.public_url,
-    previewImageUrl: schedule.public_url,
+    text: `ดูผลการเรียนได้ที่: ${link}`,
   });
 
   return;

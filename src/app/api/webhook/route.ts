@@ -1,5 +1,8 @@
 import { WebhookRequestBody } from "@line/bot-sdk";
 import { classSchedule } from "./_messages/class-schedule";
+import { activitySchedule } from "./_messages/activity-schedule";
+import { gradeReport } from "./_messages/grade-report";
+
 
 export async function POST(req: Request) {
   const res: WebhookRequestBody = await req.json();
@@ -17,6 +20,10 @@ export async function POST(req: Request) {
             await classSchedule(event);
             break;
           case "/กิจกรรม":
+            await activitySchedule(event);
+            break;
+            case "/ผลการเรียน":
+            await gradeReport(event);
             break;
           default:
             break;

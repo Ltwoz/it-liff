@@ -1,0 +1,52 @@
+import { MessageEvent } from "@line/bot-sdk";
+import { Reply } from "../_service/reply";
+import { createClient } from "@/lib/supabase/server";
+import { Student } from "@/types/student";
+import { Activity } from "@/types/activity";
+
+export async function activitySchedule(event: MessageEvent) {
+  const reply = new Reply();
+  const supabase = createClient();
+
+  const userId = event.source.userId;
+
+  const notregisterlink = "https://liff.line.me/2005387694-RmynZd5l";
+  
+  const { data: student }: { data: Student | null } = await supabase
+  .from("students")
+  .select("*")
+  .eq("line_uid", userId)
+  .single();
+
+if (!student) {
+  await reply.sendText({
+    replyToken: event.replyToken,
+    text: `คุณยังไม่ได้ลงทะเบียน กรุณาลงทะเบียนผ่านลิ้งนี้: ${notregisterlink}`
+  });
+
+  return;
+}
+
+  const { data: activity }: { data: Activity | null } = await supabase
+    .from("activity_schedule")
+    .select("public_url")
+    .eq("line_uid", userId)
+    .single();
+
+  if (!activity) {
+    await reply.sendText({
+      replyToken: event.replyToken,
+      text: "ไม่พบตารางกิจกรรม",
+    });
+
+    return;
+  }
+
+  await reply.sendImage({
+    replyToken: event.replyToken,
+    originalContentUrl: activity.public_url,
+    previewImageUrl: activity.public_url,
+  });
+
+  return;
+}
