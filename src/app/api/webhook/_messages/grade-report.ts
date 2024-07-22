@@ -9,7 +9,7 @@ export async function gradeReport(event: MessageEvent) {
 
   const userId = event.source.userId;
 
-  const link = "https://std2018.vec.go.th/web/";
+  const link = "https://www.google.co.th/?hl=th";
   const notregisterlink = "https://liff.line.me/2005387694-RmynZd5l";
 
   const { data: student }: { data: Student | null } = await supabase
