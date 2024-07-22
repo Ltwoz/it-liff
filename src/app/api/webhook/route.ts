@@ -2,6 +2,7 @@ import { WebhookRequestBody } from "@line/bot-sdk";
 import { classSchedule } from "./_messages/class-schedule";
 import { activitySchedule } from "./_messages/activity-schedule";
 import { gradeReport } from "./_messages/grade-report";
+import { collegeCalendar } from "./_messages/college-calender"
 
 
 export async function POST(req: Request) {
@@ -25,6 +26,8 @@ export async function POST(req: Request) {
             case "/ผลการเรียน":
             await gradeReport(event);
             break;
+            case "/ปฏิทิน":
+            await collegeCalendar(event);
           default:
             break;
         }
