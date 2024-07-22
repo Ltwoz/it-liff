@@ -3,6 +3,7 @@ import { classSchedule } from "./_messages/class-schedule";
 import { activitySchedule } from "./_messages/activity-schedule";
 import { gradeReport } from "./_messages/grade-report";
 import { collegeCalendar } from "./_messages/college-calender"
+import { faqHandler } from "./_messages/faq";
 
 
 export async function POST(req: Request) {
@@ -28,7 +29,11 @@ export async function POST(req: Request) {
             break;
             case "/ปฏิทิน":
             await collegeCalendar(event);
+            case "/faq":
+            await faqHandler(event);
+            break;
           default:
+            await faqHandler(event);
             break;
         }
       }
