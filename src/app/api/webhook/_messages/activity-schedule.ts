@@ -30,7 +30,6 @@ if (!student) {
   const { data: activity }: { data: Activity | null } = await supabase
     .from("activity_schedule")
     .select("public_url")
-    .eq("line_uid", userId)
     .single();
 
   if (!activity) {
