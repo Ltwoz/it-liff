@@ -45,7 +45,6 @@ export default function RegisterForm() {
   const router = useRouter();
   const { liff } = useLiff();
 
-  const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<IProfile>();
   const [levels, setLevels] = useState<LevelOption[]>([]);
 
@@ -107,12 +106,17 @@ export default function RegisterForm() {
       .single();
 
     if (data) {
-      router.replace("/");
       toast.success("Register success");
+      setTimeout(() => {
+        if (liff) {
+          liff.closeWindow();
+        }
+      }, 2000);
     } else {
       toast.error("Something went wrong");
     }
   };
+  
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100 p-4">
