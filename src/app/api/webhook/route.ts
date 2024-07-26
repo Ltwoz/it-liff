@@ -33,7 +33,6 @@ export async function POST(req: Request) {
             await faqHandler(event);
             break;
           default:
-            await faqHandler(event);
             break;
         }
       }
