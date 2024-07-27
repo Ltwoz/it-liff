@@ -25,12 +25,13 @@ import Image from 'next/image'
 import { StudentIcon, NameIcon, EmailIcon, PhoneNumberIcon } from '@/icons/iconsSVG';
 
 const formSchema = z.object({
-  code: z.string().min(11),
-  name: z.string().min(3),
-  level: z.string().min(1),
-  email: z.string().email(),
-  phone_no: z.string().min(10),
+  code: z.string().min(11, { message: "รหัสนักศึกษาต้องมีอย่างน้อย 11 ตัวอักษร" }),
+  name: z.string().min(3, { message: "กรุณากรอก ชื่อ-นามสกุลให้ถูกต้อง" }),
+  level: z.string().min(1, { message: "กรุณาเลือกระดับชั้น" }),
+  email: z.string().email({ message: "กรุณาใส่อีเมล์ที่ถูกต้อง" }),
+  phone_no: z.string().min(10, { message: "เบอร์โทรศัพท์ต้องมีความยาวอย่างน้อย 10 ตัวอักษร" }),
 });
+
 
 export type StudentType = z.infer<typeof formSchema>;
 
@@ -128,9 +129,9 @@ export default function RegisterForm() {
     });
 
     if (response.ok) {
-      alert('Registration data sent!');
+      alert('Registration Succesfully!');
     } else {
-      alert('Failed to send registration data.');
+      alert('Fail to make Registration');
     }
   };
 
