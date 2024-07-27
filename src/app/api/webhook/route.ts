@@ -7,35 +7,33 @@ import { gradeReport } from "./_messages/grade-report";
 import { collegeCalendar } from "./_messages/college-calender";
 import { faqHandler } from "./_messages/faq";
 
-const debounceTime = 1000;
+// const debounceTime = 1000;
 
-const handleEvents = debounce(async (event: any) => {
-  const message = event.message.text.toLowerCase();
+// const handleEvents = debounce(async (event: any) => {
+//   const message = event.message.text.toLowerCase();
 
-  // Testing. Delete later. before 1 Aug, 2024
-  // const message = event.message
-  console.log(event);
+//   console.log(event);
 
-  switch (message) {
-    case "/ตารางเรียน":
-      await classSchedule(event);
-      break;
-    case "/กิจกรรม":
-      await activitySchedule(event);
-      break;
-    case "/ผลการเรียน":
-      await gradeReport(event);
-      break;
-    case "/ปฏิทิน":
-      await collegeCalendar(event);
-      break;
-    case "/faq":
-      await faqHandler(event);
-      break;
-    default:
-      break;
-  }
-}, debounceTime);
+//   switch (message) {
+//     case "/ตารางเรียน":
+//       await classSchedule(event);
+//       break;
+//     case "/กิจกรรม":
+//       await activitySchedule(event);
+//       break;
+//     case "/ผลการเรียน":
+//       await gradeReport(event);
+//       break;
+//     case "/ปฏิทิน":
+//       await collegeCalendar(event);
+//       break;
+//     case "/faq":
+//       await faqHandler(event);
+//       break;
+//     default:
+//       break;
+//   }
+// }, debounceTime);
 
 export async function POST(req: Request) {
   const res: WebhookRequestBody = await req.json();
@@ -47,7 +45,27 @@ export async function POST(req: Request) {
     for (const event of res.events) {
       if (event.type === "message" && event.message.type === "text") {
         const message = event.message.text.toLowerCase();
-        await handleEvents(event);
+        // await handleEvents(event);
+
+        switch (message) {
+          case "/ตารางเรียน":
+            await classSchedule(event);
+            break;
+          case "/กิจกรรม":
+            await activitySchedule(event);
+            break;
+          case "/ผลการเรียน":
+            await gradeReport(event);
+            break;
+          case "/ปฏิทิน":
+            await collegeCalendar(event);
+            break;
+          case "/faq":
+            await faqHandler(event);
+            break;
+          default:
+            break;
+        }
       }
     }
 
