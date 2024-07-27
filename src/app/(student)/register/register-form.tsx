@@ -32,42 +32,6 @@ const formSchema = z.object({
   phone_no: z.string().min(10),
 });
 
-const sendLineMessage = async (lineUid: string, message: string) => {
-  const token = process.env.LINE_ACCESS_TOKEN;
-
-  if (!token) {
-    console.error("LINE_ACCESS_TOKEN is not defined.");
-    return;
-  }
-
-  try {
-    const response = await fetch("https://api.line.me/v2/bot/message/push", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        to: lineUid,
-        messages: [
-          {
-            type: "text",
-            text: message,
-          },
-        ],
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to send message to LINE.");
-    }
-  } catch (error) {
-    console.error("Error sending LINE message:", error);
-  }
-};
-
-
-
 export type StudentType = z.infer<typeof formSchema>;
 
 type LevelOption = {
@@ -140,19 +104,8 @@ export default function RegisterForm() {
       })
       .select()
       .single();
-  
+
     if (data) {
-      const levelName = levels.find(level => level.value === values.level)?.label || "Unknown";
-  
-      const message = `
-        Register successfully
-        รหัสนักศึกษา: ${values.code}
-        ชื่อ: ${values.name}
-        ระดับชั้น: ${levelName}
-      `;
-  
-      await sendLineMessage(profile?.userId || "", message);
-  
       toast.success("Register success");
       setTimeout(() => {
         if (liff) {
@@ -162,9 +115,24 @@ export default function RegisterForm() {
     } else {
       toast.error("Something went wrong");
     }
+
+    const response = await fetch('/api/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        code: values.code,
+        name: values.name,
+        level: values.level,
+        userId: profile?.userId
+      }),
+    });
+
+    if (response.ok) {
+      alert('Registration data sent!');
+    } else {
+      alert('Failed to send registration data.');
+    }
   };
-  
-  
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100 p-4">
@@ -178,9 +146,9 @@ export default function RegisterForm() {
             </Avatar>
           </div>
           <Form {...form}>
-            <form 
-            onSubmit={form.handleSubmit(onSubmit)} 
-            className="space-y-4 w-full"
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-4 w-full"
             >
               <FormField
                 control={form.control}
