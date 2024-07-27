@@ -7,7 +7,7 @@ import { gradeReport } from "./_messages/grade-report";
 import { collegeCalendar } from "./_messages/college-calender";
 import { faqHandler } from "./_messages/faq";
 
-const debounceTime = 3000;
+const debounceTime = 1000;
 
 const handleEvents = debounce(async (event: any) => {
   const message = event.message.text.toLowerCase();
