@@ -34,14 +34,11 @@ export async function POST(request: Request) {
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Failed to send message to LINE OA: ${errorText}`);
+      throw new Error('Failed to send message to LINE OA');
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
-
-    console.error('Error sending message:', error.message);
-    return NextResponse.json({ success: false, message: error.message });
+    return NextResponse.json({ success: false, message: 'Error sending message' });
   }
 }
