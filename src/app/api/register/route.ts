@@ -1,5 +1,15 @@
 import { NextResponse } from 'next/server';
 
+const levelMap: Record<string, string> = {
+  "1": "ปวช.1",
+  "2": "ปวช.2",
+  "3": "ปวช.3",
+  "4": "ปวส.1 กลุ่ม สายตรง",
+  "5": "ปวส.1 กลุ่ม ม.6",
+  "6": "ปวส.2 กลุ่ม สายตรง",
+  "7": "ปวส.2 กลุ่ม ม.6",
+};
+
 export async function POST(request: Request) {
   try {
     const { code, name, level, userId } = await request.json();
@@ -8,7 +18,9 @@ export async function POST(request: Request) {
       throw new Error('Missing required fields (code, name, level, userId)');
     }
 
-    const message = `รหัสนักศึกษา: ${code}\nชื่อ-นามสกุล: ${name}\nระดับชั้น: ${level}`;
+    const levelDescription = levelMap[level] || level;
+
+    const message = `รหัสนักศึกษา: ${code}\nชื่อ-นามสกุล: ${name}\nระดับชั้น: ${levelDescription}`;
 
     const accessToken = process.env.LINE_ACCESS_TOKEN;
 
