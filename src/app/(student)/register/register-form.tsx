@@ -25,11 +25,23 @@ import Image from 'next/image'
 import { StudentIcon, NameIcon, EmailIcon, PhoneNumberIcon } from '@/icons/iconsSVG';
 
 const formSchema = z.object({
-  code: z.string().min(11, { message: "รหัสนักศึกษาต้องมีอย่างน้อย 11 ตัวอักษร" }),
-  name: z.string().min(3, { message: "กรุณากรอก ชื่อ-นามสกุลให้ถูกต้อง" }),
+  code: z
+    .string()
+    .regex(/^\d+$/, { message: "รหัสนักศึกษาต้องประกอบด้วยตัวเลขเท่านั้น" })
+    .length(11, { message: "รหัสนักศึกษาต้องมี 11 หลัก" }),
+  name: z
+    .string()
+    .regex(/^[A-Za-zก-๙]+ [A-Za-zก-๙]+$/, {
+      message: "ชื่อ นามสกุลต้องประกอบด้วยตัวอักษรเท่านั้น",
+    })
+    .min(3, { message: "กรุณากรอก ชื่อ-นามสกุลให้ถูกต้อง" })
+    .max(50, { message: "ชื่อ-นามสกุลต้องมีความยาวไม่เกิน 50 ตัวอักษร" }),
   level: z.string().min(1, { message: "กรุณาเลือกระดับชั้น" }),
-  email: z.string().email({ message: "กรุณาใส่อีเมล์ที่ถูกต้อง" }),
-  phone_no: z.string().min(10, { message: "เบอร์โทรศัพท์ต้องมีความยาวอย่างน้อย 10 ตัวอักษร" }),
+  email: z.string().email({ message: "กรุณาใส่อีเมลที่ถูกต้อง" }),
+  phone_no: z
+    .string()
+    .regex(/^\d+$/, { message: "กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้อง" })
+    .length(10, { message: "เบอร์โทรศัพท์ต้องมี 10 หลัก" }),
 });
 
 
@@ -51,6 +63,7 @@ export default function RegisterForm() {
 
   const form = useForm<StudentType>({
     resolver: zodResolver(formSchema),
+    mode: "onChange",
     defaultValues: {
       code: "",
       name: "",
