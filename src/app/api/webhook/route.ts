@@ -7,33 +7,34 @@ import { gradeReport } from "./_messages/grade-report";
 import { collegeCalendar } from "./_messages/college-calender";
 import { faqHandler } from "./_messages/faq";
 
-// const debounceTime = 1000;
+const debounceTime = 1000;
 
-// const handleEvents = debounce(async (event: any) => {
-//   const message = event.message.text.toLowerCase();
+const handleEvents = debounce(async (event: MessageEvent) => {
+  if (event.message.type !== "text") return;
 
-//   console.log(event);
+  const message = event.message.text.toLowerCase();
 
-//   switch (message) {
-//     case "/ตารางเรียน":
-//       await classSchedule(event);
-//       break;
-//     case "/กิจกรรม":
-//       await activitySchedule(event);
-//       break;
-//     case "/ผลการเรียน":
-//       await gradeReport(event);
-//       break;
-//     case "/ปฏิทิน":
-//       await collegeCalendar(event);
-//       break;
-//     case "/faq":
-//       await faqHandler(event);
-//       break;
-//     default:
-//       break;
-//   }
-// }, debounceTime);
+  if (message.startsWith("/cs")) {
+    await classSchedule(event);
+  } else {
+    switch (message) {
+      case "/กิจกรรม":
+        await activitySchedule(event);
+        break;
+      case "/ผลการเรียน":
+        await gradeReport(event);
+        break;
+      case "/ปฏิทิน":
+        await collegeCalendar(event);
+        break;
+      case "/faq":
+        await faqHandler(event);
+        break;
+      default:
+        break;
+    }
+  }
+}, debounceTime);
 
 export async function POST(req: Request) {
   const res: WebhookRequestBody = await req.json();
@@ -44,28 +45,29 @@ export async function POST(req: Request) {
   try {
     for (const event of res.events) {
       if (event.type === "message" && event.message.type === "text") {
-        const message = event.message.text.toLowerCase();
-        // await handleEvents(event);
+        await handleEvents(event);
+        // const message = event.message.text.toLowerCase();
 
-        switch (message) {
-          case "/ตารางเรียน":
-            await classSchedule(event);
-            break;
-          case "/กิจกรรม":
-            await activitySchedule(event);
-            break;
-          case "/ผลการเรียน":
-            await gradeReport(event);
-            break;
-          case "/ปฏิทิน":
-            await collegeCalendar(event);
-            break;
-          case "/faq":
-            await faqHandler(event);
-            break;
-          default:
-            break;
-        }
+        // if (message.startsWith("/cs")) {
+        //   await classSchedule(event);
+        // } else {
+        //   switch (message) {
+        //     case "/กิจกรรม":
+        //       await activitySchedule(event);
+        //       break;
+        //     case "/ผลการเรียน":
+        //       await gradeReport(event);
+        //       break;
+        //     case "/ปฏิทิน":
+        //       await collegeCalendar(event);
+        //       break;
+        //     case "/faq":
+        //       await faqHandler(event);
+        //       break;
+        //     default:
+        //       break;
+        //   }
+        // }
       }
     }
 
