@@ -1,59 +1,50 @@
 import { MessageEvent, TextEventMessage } from "@line/bot-sdk";
 import { Reply } from "../_service/reply";
 import { createClient } from "@/lib/supabase/server";
-import { Student } from "@/types/student";
-
-const faqQuestions = `โปรดเลือกคำถามที่พบบ่อย\n(พิมตัวเลข เช่น "1")\n1. คำถามที่ 1\n2. คำถามที่ 2\n3. คำถามที่ 3`;
-
-const faqAnswers: { [key: string]: string } = {
-  "1": "คำตอบสำหรับคำถามที่ 1",
-  "2": "คำตอบสำหรับคำถามที่ 2",
-  "3": "คำตอบสำหรับคำถามที่ 3",
-};
 
 export async function faqHandler(event: MessageEvent) {
   const reply = new Reply();
   const supabase = createClient();
 
-  const userId = event.source.userId;
-
-  const notregisterlink = "https://liff.line.me/2005387694-RmynZd5l";
-  
-  const { data: student }: { data: Student | null } = await supabase
-    .from("students")
-    .select("*")
-    .eq("line_uid", userId)
-    .single();
-
-  if (!student) {
-    await reply.sendText({
-      replyToken: event.replyToken,
-      text: `คุณยังไม่ได้ลงทะเบียน กรุณาลงทะเบียนผ่านลิ้งนี้: ${notregisterlink}`
-    });
-
-    return;
-  }
-
   if (event.message.type === "text") {
     const messageText = (event.message as TextEventMessage).text.trim();
-    const answer = faqAnswers[messageText];
 
-    if (answer) {
+    const { data: faqs, error } = await supabase
+      .from("faq")
+      .select("id, question, answer")
+      .eq("is_active", true).order('id', { ascending: true })
+
+    if (error || !faqs || faqs.length === 0) {
       await reply.sendText({
         replyToken: event.replyToken,
-        text: answer,
+        text: "ไม่พบคำถามที่พบบ่อยในขณะนี้",
+      });
+      return;
+    }
+
+    const faqQuestions = faqs
+      .map((faq, index) => `${index + 1}. ${faq.question}`)
+      .join("\n");
+
+    const selectedIndex = parseInt(messageText, 10) - 1;
+    const selectedFaq = faqs[selectedIndex];
+
+    if (selectedFaq) {
+      await reply.sendText({
+        replyToken: event.replyToken,
+        text: selectedFaq.answer,
       });
     } else {
-      await reply.sendText({
-        replyToken: event.replyToken,
-        text: faqQuestions,
-      });
+      if (messageText === "/faq") {
+        await reply.sendText({
+          replyToken: event.replyToken,
+          text: `โปรดเลือกคำถามที่พบบ่อย\n(พิมตัวเลข เช่น "1")\n${faqQuestions}`,
+        });
+      } 
+      else {
+        return;
+      }
     }
-  } else {
-    await reply.sendText({
-      replyToken: event.replyToken,
-      text: faqQuestions,
-    });
   }
 
   return;
