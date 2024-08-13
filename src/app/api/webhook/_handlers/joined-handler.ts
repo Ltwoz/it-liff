@@ -7,29 +7,21 @@ export async function joinedHandler(event: JoinEvent) {
   const supabase = createClient();
 
   if (event.type === "join" && event.source.type === "group") {
-    try {
-      const groupId = event.source.groupId;
+    const groupId = event.source.groupId;
 
-      const summary = await service.summary({ groupId });
+    const summary = await service.summary({ groupId });
 
-      console.log("summary : ", summary);
+    const { data: group } = await supabase
+      .from("groups")
+      .insert({
+        name: summary.groupName,
+        image: summary.pictureUrl,
+        gid: summary.groupId,
+      })
+      .select("*")
+      .single();
 
-      const { data: group } = await supabase
-        .from("groups")
-        .insert({
-          name: summary.groupName,
-          image: summary.pictureUrl,
-          gid: summary.groupId,
-        })
-        .select()
-        .single();
-
-      console.log(group);
-    } catch (error) {
-      throw new Error(
-        `Caught error at webhook/joined-handler with these error : ${error}`
-      );
-    }
+    console.log("inserted result : ", group);
   }
 
   return;
