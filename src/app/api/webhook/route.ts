@@ -5,6 +5,7 @@ import { activitySchedule } from "./_messages/activity-schedule";
 import { gradeReport } from "./_messages/grade-report";
 import { collegeCalendar } from "./_messages/college-calender";
 import { faqHandler } from "./_messages/faq";
+import { joinedHandler } from "./_handlers/joined-handler";
 
 export async function POST(req: Request) {
   const res: WebhookRequestBody = await req.json();
@@ -38,6 +39,8 @@ export async function POST(req: Request) {
               break;
           }
         }
+      } else if (event.type === "join" && event.source.type === "group") {
+        await joinedHandler(event);
       }
     }
 

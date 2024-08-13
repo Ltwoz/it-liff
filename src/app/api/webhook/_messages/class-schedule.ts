@@ -34,8 +34,6 @@ export async function classSchedule(event: MessageEvent) {
     return;
   }
 
-  console.log("sending...");
-
   await reply.sendImage({
     replyToken: event.replyToken,
     originalContentUrl: schedule.public_url,
