@@ -1,19 +1,18 @@
-import { MessageEvent } from "@line/bot-sdk";
+import { MessageEvent, messagingApi } from "@line/bot-sdk";
 import { Reply } from "../_service/reply";
 import { createClient } from "@/lib/supabase/server";
-import { Student } from "@/types/student";
 import { Activity } from "@/types/activity";
 
 export async function activitySchedule(event: MessageEvent) {
   const reply = new Reply();
   const supabase = createClient();
 
-  const { data: activity }: { data: Activity | null } = await supabase
-    .from("activity_schedule")
-    .select("public_url")
-    .single();
+  const { data: activities }: { data: Activity[] | null } = await supabase
+    .from("activity_schedules")
+    .select("*")
+    .eq("is_publish", true);
 
-  if (!activity) {
+  if (!activities?.length) {
     await reply.sendText({
       replyToken: event.replyToken,
       text: "ไม่พบตารางกิจกรรม",
@@ -22,10 +21,31 @@ export async function activitySchedule(event: MessageEvent) {
     return;
   }
 
-  await reply.sendImage({
+  const columns: messagingApi.CarouselColumn[] = activities.map((activity) => ({
+    thumbnailImageUrl: activity.public_url,
+    imageBackgroundColor: "#FFFFFF",
+    title: activity.title,
+    text:
+      activity.description.length > 60
+        ? `${activity.description.substring(0, 57)}...`
+        : activity.description,
+    actions: [
+      {
+        type: "postback",
+        label: "อ่านต่อ",
+        data: `activity:activityId=${activity.id}`,
+      },
+    ],
+  }));
+
+  await reply.sendTemplate({
     replyToken: event.replyToken,
-    originalContentUrl: activity.public_url,
-    previewImageUrl: activity.public_url,
+    options: {
+      type: "carousel",
+      columns: columns,
+      imageAspectRatio: "rectangle",
+      imageSize: "cover",
+    },
   });
 
   return;

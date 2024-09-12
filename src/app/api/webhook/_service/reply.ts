@@ -1,16 +1,26 @@
 import { messagingApi } from "@line/bot-sdk";
 const { MessagingApiClient } = messagingApi;
 
-export type TextParam = {
+type Base = {
   replyToken: string;
-  text: string;
 };
 
+export type MessagesParam = {
+  messages: messagingApi.Message[];
+} & Base;
+
+export type TextParam = {
+  text: string;
+} & Base;
+
 export type ImageParam = {
-  replyToken: string;
   originalContentUrl: string;
   previewImageUrl: string;
-};
+} & Base;
+
+export type TemplateParam = {
+  options: messagingApi.Template;
+} & Base;
 
 export class Reply {
   private client: messagingApi.MessagingApiClient;
@@ -18,6 +28,18 @@ export class Reply {
   constructor() {
     this.client = new MessagingApiClient({
       channelAccessToken: process.env.LINE_ACCESS_TOKEN || "",
+    });
+  }
+
+  /**
+   * Reply messages.
+   * @param MessagesParam
+   *
+   */
+  public async send({ replyToken, messages }: MessagesParam) {
+    await this.client.replyMessage({
+      replyToken,
+      messages: messages,
     });
   }
 
@@ -55,6 +77,24 @@ export class Reply {
           type: "image",
           originalContentUrl,
           previewImageUrl,
+        },
+      ],
+    });
+  }
+
+  /**
+   * Reply a template.
+   * @param TemplateParam
+   *
+   */
+  public async sendTemplate({ replyToken, options }: TemplateParam) {
+    await this.client.replyMessage({
+      replyToken,
+      messages: [
+        {
+          type: "template",
+          altText: "template",
+          template: options,
         },
       ],
     });

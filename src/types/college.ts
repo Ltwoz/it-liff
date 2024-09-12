@@ -1,4 +1,6 @@
 export interface College {
-    public_url: string;
-  }
-  
+  id: number;
+  public_url: string;
+  created_at: string;
+  updated_at: string;
+}

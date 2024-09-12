@@ -6,6 +6,7 @@ import { gradeReport } from "./_messages/grade-report";
 import { collegeCalendar } from "./_messages/college-calender";
 import { faqHandler } from "./_messages/faq";
 import { joinedHandler } from "./_handlers/joined-handler";
+import { activityPostback } from "./_messages/activity-postback";
 
 export async function POST(req: Request) {
   const res: WebhookRequestBody = await req.json();
@@ -41,6 +42,12 @@ export async function POST(req: Request) {
         }
       } else if (event.type === "join" && event.source.type === "group") {
         await joinedHandler(event);
+      } else if (event.type === "postback") {
+        const { data } = event.postback;
+
+        if (data.startsWith("activity:")) {
+          await activityPostback(event);
+        }
       }
     }
 
