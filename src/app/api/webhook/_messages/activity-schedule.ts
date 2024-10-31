@@ -17,7 +17,7 @@ export async function activitySchedule(event: MessageEvent) {
       replyToken: event.replyToken,
       text: "ไม่พบตารางกิจกรรม",
     });
-
+ 
     return;
   }
 
